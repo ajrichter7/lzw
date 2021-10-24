@@ -2,9 +2,24 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
+
+
+
+
+//this is a comparator for the map type, it will compare things
+//by just putting them in order
+struct alwaysbigger {
+    bool operator()(const std::vector<bool>& a, const std::vector<bool>& b) const {
+        return true;
+    }
+};
 
 
 using bit_stream_t = std::vector<bool>;
+//map t is 	key: subsequence
+//			value: innovation symbol
+using map_t = std::map<const std::vector<bool>, bool, alwaysbigger>;
 //this is an implementation for lempel ziv
 
 namespace LZW

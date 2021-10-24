@@ -8,30 +8,46 @@
 LZW::compress(std::vector<bool> input) {
 	//add each thing to a map
 	map_t ZLW_map;
+	vector<int>
 
 	//this is the current unique subsequence
 	std::vector<bool> current;
-	//iterate through input
-	for(int i = 0; i < input.size(); i++) {
-		//get unique substrings
-		current.push_back(input[i]);
-		
-		//if current is unique
-		if(ZLW_map.find(current) == ZLW_map.end()){
-			//we need to add it to the map
-			ZLW_map[current] = input[i];
-		}
-
-	}
-
+	std::vector<bool> next;
 
 	bit_stream_t output;
-	//now we need to iterate through the ZLW_map and 
-	//generate the codeeeeeeee
-	for (auto it = ZLW_map.begin(); it != ZLW_map.end(); ++it){
-		output.push_back
+
+	//iterate through input
+	for(int i = 0; i < input.size(); i++) {
+		
+		//get unique substrings
+		next.push_back(input[i]);
+		
+
+
+		//if next is unique
+		if(ZLW_map.find(next) == ZLW_map.end()){
+			//we need to add it to the map
+			ZLW_map[current] = i;
+			//and then add it to the output
+			output.append(ZLW_map.find(current));
+			output.push_back(input[i]);
+
+			//then we need to delete current and next
+			current.clear();
+			next.clear();
+
+		}
+		else
+		{
+			current.push_back(input[i]);
+		}
 	}
 
+	//if the last thing isn't unique, we need to just add the 
+	// thing's numerical pos to the end of the output
+	if(!current.empty()){
+		output.append(ZLW_map.find(current));
+	}
 
 	return output;
 }

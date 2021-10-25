@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 	an integer. We check if that integer is nonnegative and not EOF indicating
 	that is it an ASCII character which we can then convert to a character and
 	send to the output stream
-	Once the EOF is found the files are closed and the function returns
+	Once the EOF is found the files are closed and the function returns. 
 	*/
 	for (int i = 0; i < length_of_doc; i++){
 		new_int = LZW::decompress(bitio.input_bit());

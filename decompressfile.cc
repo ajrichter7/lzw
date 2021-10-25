@@ -2,11 +2,11 @@
 #include <fstream>
 #include <string>
 
-#include "huffman.hh"
+#include "lempel_ziv.hh"
 #include "bitio.hh"
 
 using namespace std;
-
+using namespace LZW;
 
 int main(int argc, char** argv) {
 	//returns an error if no input file given
@@ -25,7 +25,6 @@ int main(int argc, char** argv) {
  	}
 
 	//variable declarations needed later in the code
-	Huffman huffman;
 	int new_int;
 	BitIO bitio(nullptr, &inp);
 
@@ -45,21 +44,21 @@ int main(int argc, char** argv) {
 	inp.seekg (0, inp.beg); //resets the position to the beginning of the file
 	int length_of_doc = length * 8 ;//get the bit length of the doc
 
-	/* 
+	/*
 	bitio reads one bit at a time and sends that bit to the decoder which returns
-	an integer. We check if that integer is nonnegative and not EOF indicating 
+	an integer. We check if that integer is nonnegative and not EOF indicating
 	that is it an ASCII character which we can then convert to a character and
 	send to the output stream
 	Once the EOF is found the files are closed and the function returns
 	*/
 	for (int i = 0; i < length_of_doc; i++){
-		new_int = huffman.decode(bitio.input_bit());
-		if (new_int >= 0 && new_int != Huffman::HEOF) {
+		new_int = LZW::decompress(bitio.input_bit());
+		if (new_int >= 0 && new_int != LZW::HEOF) {
 			out << (char)new_int;
 		}
-		else if (new_int == Huffman::HEOF) {
+		else if (new_int == LZW::HEOF) {
 			out.close();
-			inp.close(); 
+			inp.close();
 			break;
 		}
 	}

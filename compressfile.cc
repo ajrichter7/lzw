@@ -34,14 +34,14 @@ int main(int argc, char** argv) {
 Creates an instance of LZW class and bitio class, and initializes a character
 and a vector<bits_t> code. While you can still get a character from the file, we
 encode the character into a vector of bits. Then it will output each bit calling
-the bitio.output_bit() function.   
+the bitio.output_bit() function.
 */
 
 	BitIO bitio(&out, nullptr);
 	LZW::bits_t code;
 	char character;
 	while (inp.get(character)) {
-		code = huffman.encode(character);
+		code = LZW::encode(character);
 		for (auto i : code) {
 			bitio.output_bit(i);
 		}

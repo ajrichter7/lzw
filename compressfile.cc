@@ -39,7 +39,7 @@ the bitio.output_bit() function.
 
 	BitIO bitio(&out, nullptr);
 	LZW::bits_t code;
-	char character;
+	char character;c
 	while (inp.get(character)) {
 		code << LZW::encode(character);
 		for (auto i : code) {

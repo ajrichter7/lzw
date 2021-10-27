@@ -49,9 +49,15 @@ int main(int argc, char** argv) {
 	an integer. We check if that integer is nonnegative and not EOF indicating
 	that is it an ASCII character which we can then convert to a character and
 	send to the output stream
-	Once the EOF is found the files are closed and the function returns. 
+	Once the EOF is found the files are closed and the function returns.
+
+	This function is wrong. So we want to keep reading in bits, if we have seen the
+	bit then viola we can decompress it and its a new string or whatever, but if
+	we have not seen that bit we just read, we must halt and then can flush out those
+	bits.
 	*/
 	for (int i = 0; i < length_of_doc; i++){
+		/*
 		new_int = LZW::decompress(bitio.input_bit());
 		if (new_int >= 0 && new_int != LZW::HEOF) {
 			out << (char)new_int;
@@ -60,6 +66,7 @@ int main(int argc, char** argv) {
 			out.close();
 			inp.close();
 			break;
+		*/
 		}
 	}
  	return 0;

@@ -1,14 +1,13 @@
 #include "lempel_ziv.hh"
 
 
-//bit_stream_t = std::vector<bool>;
+bit_stream_t = std::vector<bool>;
 
 
 
 LZW::compress(std::vector<bool> input) {
 	//add each thing to a map
 	map_t ZLW_map;
-	vector<int>
 
 	//this is the current unique subsequence
 	std::vector<bool> current;

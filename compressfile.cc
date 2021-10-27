@@ -39,8 +39,22 @@ the bitio.output_bit() function.
 
 	BitIO bitio(&out, nullptr);
 	LZW::bits_t code;
-	char character;c
+	char character;
+	/*
+	This is wrong, you want to get a stream so feed the stream of bits to encoder.
+	The encoder checks if it is in the dictionary created (1) if it is then we move
+	to next bit, (2) if not then we add this bit to the dictionary. Then output
+	those bits, but if we just take in a character with no stopping condition 
+	then we always stop after one character so bitio then is wrong.
+	*/
 	while (inp.get(character)) {
+		while (LZW::encode(character)){
+			/*
+			Not me tryna solve the halting problem lol
+			if LZW::encode(character) does not halt then we want to look at the next
+			character using peek
+			*/
+		}
 		code << LZW::encode(character);
 		for (auto i : code) {
 			bitio.output_bit(i);

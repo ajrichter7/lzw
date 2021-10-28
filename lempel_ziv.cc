@@ -28,7 +28,7 @@ void output_to_ostream(std::ostream& os, uint16_t index, char inov_c) {
 }
 
 
-namespace LZW 
+namespace LZW
 {
 	bit_stream_t compress(std::vector<bool> input) {
 
@@ -39,7 +39,12 @@ namespace LZW
 
 	//this will take the name of a file and then read from it
 	int compress(std::string fn, std::ostream& os) {
-	//alex ignore this
+
+	/*
+Start by constructing the table  with the ASCII characters in the first 256 entries. Get the first character and then since it with is only a single character it is in the table so we want to see if that plus the next character is in the
+table which it is not, so then we are going to add that to the new table and increment the size of the table. Note that newcode is a counter to make sure that we don’t go past the number of possible substrings. If we reach that condition,
+then we want to just encode the text using the values in the table and stop expanding the table.
+ */
 		int num_bytes = 0;
 
 		//opening file from name
@@ -89,31 +94,31 @@ namespace LZW
 			else
 			{
 		//		std::cout <<"next string is "<<next_string<<" and next_code is " <<nextcode<<std::endl;
-				if (nextcode <= MAX_16_BIT_ENCODING) 
+				if (nextcode <= MAX_16_BIT_ENCODING)
 				{
-					table[next_string] = nextcode; 
+					table[next_string] = nextcode;
 
 					nextcode++;
 
 				}
-				
+
 				char innovation_c = next_c;
 
 
-		//		std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
+		//		std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl;
 				os<<table[cur_string]<<"\n";
 				num_bytes++;
 				//output_to_ostream(os, table[cur_string], innovation_c);
 				cur_string = next_c;
-				
+
 			}
 		}
-		//std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
-		os<<table[cur_string];	
+		//std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl;
+		os<<table[cur_string];
 		num_bytes++;
 		//output_to_ostream(os, table[cur_string], 0);
 
-		
+
 		input_file.close();
 
 		return num_bytes;
@@ -130,13 +135,18 @@ namespace LZW
 	//given a file name, this will get bits
 	std::string decompress_to_string (std::string fn, std::string of_n)
 	{
+		/*
+Build the same dictionary and then we want to search through the dictionary to find the characters. This function will read in an encoded file and then we will write a decompressed version. 
+We read in the first value which is a number in ASCII so we look it up in the table we have created. Then we go and check if the next character can be read. If it is a value greater than the table size, then we are going
+to want to add the new value as an entry of the old code + new character.
+		*/
 		std::cout << "\n\n==DECOMPRESSION FILE==\nreading:"<<fn<<std::endl;
 		std::ofstream output_file(of_n);
 
 
 		std::ifstream input_file(fn);
 
-		assert(input_file.is_open());		
+		assert(input_file.is_open());
 
 		std::vector<std::string> table;
 		for (int i = 0; i < 255; i++) {
@@ -151,14 +161,14 @@ namespace LZW
 		uint16_t old_code;
 		char getstringbuf[255];
 
-	
+
 		input_file.getline (getstringbuf, 255);
 		old_code = atoi(getstringbuf);
 		//std::cout << "get string buf is "<<getstringbuf<<std::endl;
 
 		std::string cur_string = table[old_code];
 		output_file << cur_string ;
-		
+
 		//std::cout<<"old code is "<<old_code<<" and cur string is " <<cur_string<<std::endl;
 		char cur_char = cur_string[0];
 
@@ -167,7 +177,7 @@ namespace LZW
 		  //input_file>>(new_code);
 		  input_file.getline (getstringbuf, 255);
 		new_code = atoi(getstringbuf);
-		  
+
 		  std::string cur_string = "";
 		  if (new_code >= table.size()) {
 		    cur_string = table[old_code];
@@ -209,7 +219,7 @@ namespace LZW
 
 		std::unordered_map<std::string, uint16_t> table;
 
-		for(int i = 1; i < 256; ++i) 
+		for(int i = 1; i < 256; ++i)
 		{
 			std::string ass = "" + (char) i;
 			table[ass] = i-1;
@@ -251,19 +261,19 @@ namespace LZW
 		  cur_string = ??
 		}
 //
-		char first_c; 
+		char first_c;
 		input_file.get(first_c);
 
 		std::string cur_string;
 
-		while( input_file.peek() != EOF ) 
+		while( input_file.peek() != EOF )
 		{
 			input_file.get(next_c);
 
 
 			if (table.find(cur_string + next_c) != table.cend()) // if the new char is in the table
 			{
-				
+
 				prev_string = next_string;
 
 			}

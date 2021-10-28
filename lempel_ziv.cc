@@ -87,15 +87,24 @@ LZW::compress(std::string fn, std::ostream& os) {
 	//iterate through all the words in the file
 
 	/*
-	Instead of this want to have first character
+	nextcode = 256
+
 	stringPrev = inputfile.getnextcharacter;
 	while (can get a new character ~~> character=inputfile.getnextcharacter)
-		index = find(stringPrev, character)
+		index <= find(stringPrev, character)
 
 		if table[index] exists: then stringPrev = stringPrev + character
 		else:
 			if nextcode <= (max number for 12 bit or 16 bit encodings ie 4000-sum or 65500-sum)
+				{
+				want to add the new stringPrev to the dictionary with the value of nextcode and increment nextcode++
+				output the code
+				stringPrev = character
+				}
 
+	// Otherwise we still want to make sure to output the last characters dont forget!
+	output the code
+	stringPrev = character
 	*/
 	while(std::getline(input_file,word))
 	{

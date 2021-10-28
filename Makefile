@@ -10,3 +10,6 @@ compress: compressfile.cc bitio.cc lempel_ziv.cc
 decompress: decompressfile.cc bitio.cc lempel_ziv.cc
 	${CXX} ${CXX_FLAGS} -o decomp_lz decompressfile.cc bitio.cc lempel_ziv.cc
 
+ass: main.cc lempel_ziv.cc bitio.cc
+	${CXX} main.cc lempel_ziv.cc bitio.cc -o LZ
+	

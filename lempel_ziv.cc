@@ -90,8 +90,12 @@ LZW::compress(std::string fn) {
 			//do what you want with c
 
 			std::cout <<"the current letter is "<<c<<std::endl;
-
 		}
+
+
+		//send the completed bits to Bitio
+		
+
 	}
 
 	input_file.close();

@@ -14,10 +14,10 @@ LZW::compress(std::vector<bool> input) {
 
 	//iterate through input
 	for(int i = 0; i < input.size(); i++) {
-		
+
 		//get unique substrings
 		next.push_back(input[i]);
-		
+
 
 
 		//if next is unique
@@ -39,7 +39,7 @@ LZW::compress(std::vector<bool> input) {
 		}
 	}
 
-	//if the last thing isn't unique, we need to just add the 
+	//if the last thing isn't unique, we need to just add the
 	// thing's numerical pos to the end of the output
 	if(!current.empty()){
 		output.append(ZLW_map.find(current));
@@ -63,16 +63,40 @@ LZW::compress(std::string fn, std::ostream* os) {
 	std::ifstream input_file (fn);
 
 	//first check to confirm that file is open
-	std::string assert_message = "the file " + fn + " isn't open, aborting"; 
+	std::string assert_message = "the file " + fn + " isn't open, aborting";
 	assert(input_file.is_open(), assert_message);
-	
+
 
 	//output
 	BitIO outputter(&os, nullptr);
 
 //ok don't ignore this:
 
+	/*
+	(1) Make a map w 256 code words which will coorespond to the ASCII symbols but
+	will use 12 bit or 16 bit codings for the values
+
+	| table |
+
+	index : value = cooresponding ASCII
+	0 : 0000 0000 0000 0000 = NUL
+	1 : 0000 0000 0000 0001 = SOH
+	Should be a dictionary or map idk how c++ works
+	*/
+
 	//iterate through all the words in the file
+
+	/*
+	Instead of this want to have first character
+	stringPrev = inputfile.getnextcharacter;
+	while (can get a new character ~~> character=inputfile.getnextcharacter)
+		index = find(stringPrev, character)
+
+		if table[index] exists: then stringPrev = stringPrev + character
+		else:
+			if nextcode <= (max number for 12 bit or 16 bit encodings ie 4000-sum or 65500-sum)
+
+	*/
 	while(std::getline(input_file,word))
 	{
 
@@ -113,7 +137,7 @@ LZW::decompress_to_ints (bit_stream_t input)
 }
 
 
-//given a file name, this will get bits 
+//given a file name, this will get bits
 LZW::decompress_to_string (std::string fn)
 {
 	//use bitio to get things from a file name

@@ -28,7 +28,7 @@ namespace LZW
 	//this will compress a string of bools 
 	bit_stream_t compress (std::vector<bool>);
 
-	bit_stream_t compress (std::string, std::ostream&);
+	int compress (std::string, std::ostream&);
 
 
 	//we need decompress for bool vectors, strings, and ints

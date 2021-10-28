@@ -38,8 +38,9 @@ namespace LZW
 
 
 	//this will take the name of a file and then read from it
-	bit_stream_t compress(std::string fn, std::ostream& os) {
+	int compress(std::string fn, std::ostream& os) {
 	//alex ignore this
+		int num_bytes = 0;
 
 		//opening file from name
 		std::string word;
@@ -69,7 +70,7 @@ namespace LZW
 
 		std::string cur_string;
 		cur_string += cur_c;
-		std::cout <<"cur string is initially "  << cur_string <<"and cur_c is "<<cur_c <<std::endl;
+		//std::cout <<"cur string is initially "  << cur_string <<"and cur_c is "<<cur_c <<std::endl;
 
 
 		//this should start with the second character
@@ -80,14 +81,14 @@ namespace LZW
 			std::string next_string = cur_string + next_c;
 			if (table.find(next_string) != table.cend()) // if the new string is in table
 			{
-				std::cout <<"cur string is "<<cur_string<<std::endl;
+		//		std::cout <<"cur string is "<<cur_string<<std::endl;
 				cur_string = next_string;
-				std::cout <<"cur string is NOW "<<cur_string<<std::endl;
+		//		std::cout <<"cur string is NOW "<<cur_string<<std::endl;
 			}
 
 			else
 			{
-				std::cout <<"next string is "<<next_string<<" and next_code is " <<nextcode<<std::endl;
+		//		std::cout <<"next string is "<<next_string<<" and next_code is " <<nextcode<<std::endl;
 				if (nextcode <= MAX_16_BIT_ENCODING) 
 				{
 					table[next_string] = nextcode; 
@@ -99,22 +100,23 @@ namespace LZW
 				char innovation_c = next_c;
 
 
-				std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
+		//		std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
 				os<<table[cur_string]<<"\n";
+				num_bytes++;
 				//output_to_ostream(os, table[cur_string], innovation_c);
 				cur_string = next_c;
 				
 			}
 		}
-		std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
+		//std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
 		os<<table[cur_string];	
+		num_bytes++;
 		//output_to_ostream(os, table[cur_string], 0);
 
 		
 		input_file.close();
 
-		bit_stream_t output;
-		return output;
+		return num_bytes;
 	}
 
 
@@ -152,12 +154,12 @@ namespace LZW
 	
 		input_file.getline (getstringbuf, 255);
 		old_code = atoi(getstringbuf);
-		std::cout << "get string buf is "<<getstringbuf<<std::endl;
+		//std::cout << "get string buf is "<<getstringbuf<<std::endl;
 
 		std::string cur_string = table[old_code];
 		output_file << cur_string ;
 		
-		std::cout<<"old code is "<<old_code<<" and cur string is " <<cur_string<<std::endl;
+		//std::cout<<"old code is "<<old_code<<" and cur string is " <<cur_string<<std::endl;
 		char cur_char = cur_string[0];
 
 		while (input_file.peek() != EOF) {

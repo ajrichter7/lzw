@@ -3,6 +3,7 @@
 #include <fstream>		//ifstream,ofstream
 #include <cassert>		//for assert
 #include <string>		//for string
+#include <time.h>		//for benchamring
 #include "lempel_ziv.hh"
 #include "bitio.hh"
 #include "constants.hh"
@@ -48,13 +49,27 @@ int main(int argc, char** argv) {
 
 
 	//construct a lempelziv
-	LZW::compress(input_file, outputfile);
+	time_t starttime;
+	time(&starttime);
+	std::cout <<"compressed to " <<LZW::compress(input_file, outputfile) <<" words" <<std::endl;
 
+	time_t endtime;
+	time(&endtime);
+
+	auto seconds = difftime(starttime,endtime);
+	std::cout <<"tiime to compress" << seconds<<std::endl;
 
 	outputfile.close();
 
+	time(&starttime);
+
 	LZW::decompress_to_string(ofname, "OUTPUT.TXT");
 
+
+	time(&endtime);
+
+ seconds = difftime(starttime,endtime);
+	std::cout <<"tiime to decompress" << seconds<<std::endl;
 
 
 	outputfile.close();

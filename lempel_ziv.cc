@@ -1,52 +1,37 @@
 #include "lempel_ziv.hh"
 #include "bitio.hh"
+#include "constants.hh"
+
+
+
+void output_to_ostream(std::ostream& os, uint16_t index, char inov_c) {
+	BitIO bitio(&os, nullptr);
+	//first we need to output index
+	for (int i = 0; i < 16; i++) {
+		bool bit = index & 1;
+		bitio.output_bit(bit);
+		index = index >> 1; //go to the next thing in index
+	}
+
+	//and now we have to output innovation_c
+	//8 bits for byte
+	int ass = (uint16_t) inov_c;
+	for (int i = 0; i < 16; i++) //please let me write my shitty loops
+	{
+		bool bit = ass & 1;
+		bitio.output_bit(bit);
+		ass = ass >> 1;
+	}
+
+	//OKAY WE DID IT
+
+}
+
 
 namespace LZW 
 {
 	bit_stream_t compress(std::vector<bool> input) {
-#if 0
-		//add each thing to a map
-		map_t ZLW_map;
 
-		//this is the current unique subsequence
-		std::vector<bool> current;
-		std::vector<bool> next;
-
-		bit_stream_t output;
-
-		//iterate through input
-		for(int i = 0; i < input.size(); i++) {
-
-			//get unique substrings
-			next.push_back(input[i]);
-
-
-
-			//if next is unique
-			if(ZLW_map.find(next) == ZLW_map.end()){
-				//we need to add it to the map
-				ZLW_map[current] = i;
-				//and then add it to the output
-				output.push_back(ZLW_map[current]);
-				output.push_back(input[i]);
-
-				//then we need to delete current and next
-				current.clear();
-				next.clear();
-
-			}
-			else
-			{
-				current.push_back(input[i]);
-			}
-		}
-
-		//if the last thing isn't unique, we need to just add the
-		// thing's numerical pos to the end of the output
-		if(!current.empty()){
-			output.push_back(ZLW_map[current]);
-		}
-#endif
 		bit_stream_t output;
 		return output;
 	}
@@ -65,65 +50,67 @@ namespace LZW
 		assert(input_file.is_open());
 
 
-		//output
-		BitIO outputter(&os, nullptr);
+		std::unordered_map<std::string, uint16_t> table;
 
-	//ok don't ignore this:
-
-		/*
-		(1) Make a map w 256 code words which will coorespond to the ASCII symbols but
-		will use 12 bit or 16 bit codings for the values
-
-		| table |
-
-		index : value = cooresponding ASCII
-		0 : 0000 0000 0000 0000 = NUL
-		1 : 0000 0000 0000 0001 = SOH
-		.
-		.
-		.
-		
-		Should be a dictionary or map idk how c++ works
-
-		nextcode = 256
-
-		stringPrev = inputfile.getnextcharacter;
-		while (can get a new character ~~> character=inputfile.getnextcharacter)
-			index <= find(stringPrev, character)
-
-			if table[index] exists: then stringPrev = stringPrev + character
-			else:
-				if nextcode <= (max number for 12 bit or 16 bit encodings ie 4000-sum or 65500-sum)
-					{
-					want to add the new stringPrev to the dictionary with the value of nextcode and increment nextcode++
-					output the code
-					stringPrev = character
-					}
-
-		// Otherwise we still want to make sure to output the last characters dont forget!
-		output the code
-		stringPrev = character
-		*/
-		while(std::getline(input_file,word))
-		{
-
-
-			std::cout << "the current word is "<<word<<std::endl;
-			//variable 'word' contains a word from input file
-
-			//iterating through the chars in word
-			for(char c : word) {
-				//do what you want with c
-
-				std::cout <<"the current letter is "<<c<<std::endl;
-			}
-
-
-			//send the completed bits to Bitio
-			outputter.output_bit(1); //this will take care of "1", it can also take care of "0"
-
+		for (int i = 0; i < 255; i++) {
+		  std::string x;
+		  char ass = (char)(i + 1);
+		  x+=( ass);
+		  table[x] = i;
 		}
 
+		int nextcode = table.size(); //number of possible substrings
+
+		char cur_c;
+
+		input_file.get(cur_c);
+
+		char next_c;
+
+		std::string cur_string;
+		cur_string += cur_c;
+		std::cout <<"cur string is initially "  << cur_string <<"and cur_c is "<<cur_c <<std::endl;
+
+
+		//this should start with the second character
+		while (input_file.peek() != EOF )
+		{
+
+			input_file.get(next_c);
+			std::string next_string = cur_string + next_c;
+			if (table.find(next_string) != table.cend()) // if the new string is in table
+			{
+				std::cout <<"cur string is "<<cur_string<<std::endl;
+				cur_string = next_string;
+				std::cout <<"cur string is NOW "<<cur_string<<std::endl;
+			}
+
+			else
+			{
+				std::cout <<"next string is "<<next_string<<" and next_code is " <<nextcode<<std::endl;
+				if (nextcode <= MAX_16_BIT_ENCODING) 
+				{
+					table[next_string] = nextcode; 
+
+					nextcode++;
+
+				}
+				
+				char innovation_c = next_c;
+
+
+				std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
+				os<<table[cur_string]<<"\n";
+				//output_to_ostream(os, table[cur_string], innovation_c);
+				cur_string = next_c;
+				
+			}
+		}
+		std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl; 
+		os<<table[cur_string];	
+		//output_to_ostream(os, table[cur_string], 0);
+
+		
 		input_file.close();
 
 		bit_stream_t output;
@@ -139,18 +126,163 @@ namespace LZW
 
 
 	//given a file name, this will get bits
-	std::string decompress_to_string (std::string fn)
+	std::string decompress_to_string (std::string fn, std::string of_n)
 	{
-		//use bitio to get things from a file name
+		std::cout << "\n\n==DECOMPRESSION FILE==\nreading:"<<fn<<std::endl;
+		std::ofstream output_file(of_n);
+
+
 		std::ifstream input_file(fn);
 
-		BitIO next_bit(nullptr,&input_file);
+		assert(input_file.is_open());		
+
+		std::vector<std::string> table;
+		for (int i = 0; i < 255; i++) {
+			std::string x;
+		  char ass = (char)(i + 1);
+		  x+=( ass);
+		  table.push_back(x);
+		}
+
+		std::vector<std::string> output;
+
+		uint16_t old_code;
+		char getstringbuf[255];
+
+	
+		input_file.getline (getstringbuf, 255);
+		old_code = atoi(getstringbuf);
+		std::cout << "get string buf is "<<getstringbuf<<std::endl;
+
+		std::string cur_string = table[old_code];
+		output_file << cur_string ;
+		
+		std::cout<<"old code is "<<old_code<<" and cur string is " <<cur_string<<std::endl;
+		char cur_char = cur_string[0];
+
+		while (input_file.peek() != EOF) {
+		  uint16_t new_code;
+		  input_file>>(new_code);
+		  
+		  std::string cur_string = "";
+		  if (new_code >= table.size()) {
+		    cur_string = table[old_code];
+		    cur_string = cur_string + cur_char;
+		  } else {
+		    cur_string = table[new_code];
+		  }
+		  output_file<<(cur_string);
+		  cur_char = cur_string[0];
+
+		  std::string thing_to_pushbacl = table[old_code] + cur_char;
+		  table.push_back(thing_to_pushbacl);
+		  old_code = new_code;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+
+
+
+
+
+
+		int nextcode = 256; //number of possible substrings
+
+		std::unordered_map<std::string, uint16_t> table;
+
+		for(int i = 1; i < 256; ++i) 
+		{
+			std::string ass = "" + (char) i;
+			table[ass] = i-1;
+		}
+
+		char old_c;
+		char old_c_copy = old_c;
+
+
+		char new_c;
+
+		std::string prev_string = ""+ old_c;
+
+		auto byte;
+		std::ifstream input_file(fn);
+
+//
+		vector<std::string> table;
+		for (int i = 0; i < 255; i++) {
+		  string x = "" + (char)(i + 1);
+		  table.push_back(x);
+		}
+
+		vector<std::string> output;
+
+		uint16_t code;
+		input_file >> code;
+
+		cur_string = table[code];
+		output.push_back(cur_string);
+
+		while (! EOF) {
+		  input_file >> code;
+		  std::string next_string = table[code];
+		  std::string next_table_entry = cur_string + next_string[0];
+		  table.push_back(next_table_entry);
+		  output.push_back(next_string);
+
+		  cur_string = ??
+		}
+//
+		char first_c; 
+		input_file.get(first_c);
+
+		std::string cur_string;
+
+		while( input_file.peek() != EOF ) 
+		{
+			input_file.get(next_c);
+
+
+			if (table.find(cur_string + next_c) != table.cend()) // if the new char is in the table
+			{
+				
+				prev_string = next_string;
+
+			}
+
+
+
+
+
+
+
+
+
+		}
+
+
+
+		//use bitio to get things from a file name
 
 		//to get the next bit, use
 		bool next = next_bit.input_bit();
 		//it will return a bool
-
-		std::string output;
-		return output;
+#endif
+		std::string outputww;
+		return outputww;
 	}
 }

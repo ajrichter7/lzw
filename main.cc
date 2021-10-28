@@ -20,9 +20,9 @@ std::string change_extension(std::string filename, std::string new_extension)
 	std::string new_name = filename.substr(0,last_period) + new_extension;
 
 	return new_name;
-
-
 }
+
+
 
 
 
@@ -32,12 +32,14 @@ int main(int argc, char** argv) {
 	assert(argc>1&& "moar args pl0x uwu (read: give me a file to do this on)");
 
 	std::string input_file(argv[1]);
-	if (DEBUGLOGS) std::cout<<input_file<<std::endl;
+	if (DEBUGLOGS) std::cout<<"INPUT FILE NAME:" <<input_file<<std::endl;
 
 	//our output file will be a file with the same name as the original, 
 	//but with the extension .WE_LOVE_CS_421
 
 	std::string ofname = change_extension(input_file, ".WE_LOVE_CS_421");
+
+	std::cout <<"hi this is main, the ofname is "<<ofname<<std::endl;
 
 	std::ofstream outputfile(ofname);
 	//the output file is now open
@@ -49,7 +51,9 @@ int main(int argc, char** argv) {
 	LZW::compress(input_file, outputfile);
 
 
+	outputfile.close();
 
+	LZW::decompress_to_string(ofname, "OUTPUT.TXT");
 
 
 

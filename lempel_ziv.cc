@@ -55,7 +55,7 @@ LZW::compress(std::vector<int> input) {
 }
 
 //this will take the name of a file and then read from it
-LZW::compress(std::string fn) {
+LZW::compress(std::string fn, std::ostream* os) {
 //alex ignore this
 
 	//opening file from name
@@ -67,15 +67,10 @@ LZW::compress(std::string fn) {
 	assert(input_file.is_open(), assert_message);
 	
 
+	//output
+	BitIO outputter(&os, nullptr);
+
 //ok don't ignore this:
-
-	//output should contain all the 0s and 1s,
-	//for example, "0110,0" would be 0,1,1,0,0.
-	//if you'd rather do a vector of strings, I can
-	//work with that. whatever's easiest. just lmk
-	//so I can change this
-	bit_stream_t output;
-
 
 	//iterate through all the words in the file
 	while(std::getline(input_file,word))
@@ -94,7 +89,7 @@ LZW::compress(std::string fn) {
 
 
 		//send the completed bits to Bitio
-		
+		outputter.output_bit(1); //this will take care of "1", it can also take care of "0"
 
 	}
 

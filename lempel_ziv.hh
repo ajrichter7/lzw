@@ -1,10 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <map>
-
-
+#include <iostream>		//idk what this is for, silly me
+#include <vector>		//hm idk what this is for either haha uwu
+#include <map>			//for the map we use in LZW
+#include <fstream>		//for ifstream
+#include <cassert> 		//for ass
 
 
 //this is a comparator for the map type, it will compare things

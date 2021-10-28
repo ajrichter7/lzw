@@ -55,7 +55,7 @@ LZW::compress(std::vector<int> input) {
 }
 
 //this will take the name of a file and then read from it
-LZW::compress(std::string fn, std::ostream* os) {
+LZW::compress(std::string fn, std::ostream& os) {
 //alex ignore this
 
 	//opening file from name

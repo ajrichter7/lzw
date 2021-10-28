@@ -162,7 +162,9 @@ namespace LZW
 
 		while (input_file.peek() != EOF) {
 		  uint16_t new_code;
-		  input_file>>(new_code);
+		  //input_file>>(new_code);
+		  input_file.getline (getstringbuf, 255);
+		new_code = atoi(getstringbuf);
 		  
 		  std::string cur_string = "";
 		  if (new_code >= table.size()) {

@@ -29,7 +29,7 @@ namespace LZW
 
 	//overloads for taking in numbers and strings
 	bit_stream_t compress (std::vector<int>);
-	bit_stream_t compress (std::string, std::ostream*);
+	bit_stream_t compress (std::string, std::ostream&);
 
 
 	//we need decompress for bool vectors, strings, and ints

@@ -52,8 +52,24 @@ Ariel: I was curious to see how redundant papers I've written before are. My HUM
 
 
 ## Canturbry Corpus
+
+| Canturbury Item | Initial File Size (KB) | Final File Size (KB) | Compression Ratio (ie Compressed Size / Original Size) | Time to Compress (ms) | Time to Decompress (ms) | 
+| -----  | :----: |  :----:  |  :----:  |  :----: |  :----:  | 
+| alice29  | 149 |  69 (nice)  |  46.3%  |  81 | 40 | 
+| asyoulik | 123 | 62 |  50.4%  |  78 |  41  | 
+| cp.html | 25 |  15  |  60%  | 17 |  22  | 
+| fields.c | 11 |  7  |  63.6%  | 8 |  25  |
+| grammar.lsp | 4 |  3  |  75%  | 4 |  17  |
+| kennedy.xls | 1006 |  344  |  33.3%  | 413 |  126  |
+| lcet10.txt | 417 |  168  |  40.3%  | 292 |  173  |
+| plrabin12.txt | 471 |  201  |  42.7%  | 238 |  70  |
+| ptt5 | 502 |  69 (nice)  |  13.7%  | 193 |  49  |
+| sum | 38 |  25  |  65.8%  | 23 |  24  |
+| xargs.1 | 5 |  4  |  80%  | 4 |  23  |
+
+
+
 ![diff showing there's no difference bxn alice and the output from LZW](diff.bmp)
 as you can see, diff-ing output and alice29.txt returns nothing because there's no difference. When we diff between the compressed file, alice29.WE_LOVE_CS_421, the computer tells us there's a difference. 
 
 I don't want to include screenshots for every single Canturbury Corpus item, but I did check that diff produced the same results for every file tested. 
-

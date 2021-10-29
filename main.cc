@@ -3,7 +3,7 @@
 #include <fstream>		//ifstream,ofstream
 #include <cassert>		//for assert
 #include <string>		//for string
-#include <time.h>		//for benchamring
+#include <chrono>		//for benchamring
 #include "lempel_ziv.hh"
 #include "bitio.hh"
 #include "constants.hh"
@@ -40,36 +40,36 @@ int main(int argc, char** argv) {
 
 	std::string ofname = change_extension(input_file, ".WE_LOVE_CS_421");
 
-	std::cout <<"hi this is main, the ofname is "<<ofname<<std::endl;
+	if(DEBUGLOGS)std::cout <<"hi this is main, the ofname is "<<ofname<<std::endl;
 
 	std::ofstream outputfile(ofname);
 	//the output file is now open
 	assert(outputfile.is_open());
 
 
-
+	int compress_wc;
 	//construct a lempelziv
-	time_t starttime;
-	time(&starttime);
-	std::cout <<"compressed to " <<LZW::compress(input_file, outputfile) <<" words" <<std::endl;
+	auto startTime = std::chrono::high_resolution_clock::now();
+	compress_wc = LZW::compress(input_file, outputfile);
+	auto endTime = std::chrono::high_resolution_clock::now();
 
-	time_t endtime;
-	time(&endtime);
 
-	auto seconds = difftime(starttime,endtime);
-	std::cout <<"tiime to compress" << seconds<<std::endl;
+	std::cout <<"compressed to " <<compress_wc <<" words" <<std::endl;
+
+
+	float milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>( endTime - startTime ).count();
+	std::cout <<"tiime to compress: " << milliseconds<<std::endl;
 
 	outputfile.close();
 
-	time(&starttime);
 
+
+	startTime = std::chrono::high_resolution_clock::now();
 	LZW::decompress_to_string(ofname, "OUTPUT.TXT");
+	endTime = std::chrono::high_resolution_clock::now();
 
-
-	time(&endtime);
-
- seconds = difftime(starttime,endtime);
-	std::cout <<"tiime to decompress" << seconds<<std::endl;
+	milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>( endTime - startTime ).count();
+	std::cout <<"time to decompress: " << milliseconds<<std::endl;
 
 
 	outputfile.close();

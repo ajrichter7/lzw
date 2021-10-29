@@ -1,5 +1,5 @@
 # LZW Implememtation in C++ 
-## Alex Richter &Ariel Flaster
+## Alex Richter & Ariel Flaster
 
 
 
@@ -20,6 +20,7 @@ Build the same dictionary and then we want to search through the dictionary to f
 We read in the first value which is a number in ASCII so we look it up in the table we have created. Then we go and check if the next character can be read. If it is a value greater than the table size, then we are going 
 to want to add the new value as an entry of the old code + new character. We want to output the string to the output file. 
 
+#
 
 The compressed file will have the extension `WE_LOVE_CS_421`
 

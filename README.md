@@ -51,7 +51,7 @@ The compression and decompression algorithms both successfully were used on DAVI
 Ariel: I was curious to see how redundant papers I've written before are. My HUM final was really unique, but I'm glad the crowning achievement of my time at Washington University in St Louis was less redundant than David Copperfield (which I had to read for that 400 level class).  I kinda went crazy with it, but it was cool to compress random stuff, including the code for this project.
 
 
-## Canturbry Corpus
+## Canterbury Corpus
 
 | Canturbury Item | Initial File Size (KB) | Final File Size (KB) | Compression Ratio (ie Compressed Size / Original Size) | Time to Compress (ms) | Time to Decompress (ms) | 
 | -----  | :----: |  :----:  |  :----:  |  :----: |  :----:  | 
@@ -70,6 +70,6 @@ Ariel: I was curious to see how redundant papers I've written before are. My HUM
 
 
 ![diff showing there's no difference bxn alice and the output from LZW](diff.bmp)
-as you can see, diff-ing output and alice29.txt returns nothing because there's no difference. When we diff between the compressed file, alice29.WE_LOVE_CS_421, the computer tells us there's a difference. 
+As you can see, diff-ing output and alice29.txt returns nothing because there's no difference. When we diff between the compressed file, alice29.WE_LOVE_CS_421, the computer tells us there's a difference. There is a difference there because there better be a difference between the LZWed file and the uncompressed version.
 
-I don't want to include screenshots for every single Canturbury Corpus item, but I did check that diff produced the same results for every file tested. 
+I don't want to include screenshots for every single Canturbury Corpus item, but I did check that diff produced the same results for every file tested. When testing these, we had to add extensions to ptt5 and sum so that we could write normal looking output files.

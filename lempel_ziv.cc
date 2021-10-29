@@ -1,5 +1,4 @@
 #include "lempel_ziv.hh"
-#include "bitio.hh"
 #include "constants.hh"
 
 

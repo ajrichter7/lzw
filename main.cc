@@ -5,10 +5,9 @@
 #include <string>		//for string
 #include <chrono>		//for benchamring
 #include "lempel_ziv.hh"
-#include "bitio.hh"
 #include "constants.hh"
 
-
+//this truncates before the original period
 std::string change_extension(std::string filename, std::string new_extension)
 {
 	//get location of last period
@@ -27,6 +26,8 @@ std::string change_extension(std::string filename, std::string new_extension)
 
 
 
+
+
 int main(int argc, char** argv) {
 	//get arg from user
 
@@ -34,6 +35,10 @@ int main(int argc, char** argv) {
 
 	std::string input_file(argv[1]);
 	if (DEBUGLOGS) std::cout<<"INPUT FILE NAME:" <<input_file<<std::endl;
+
+	size_t last_period = input_file.find_last_of('.');
+	//this will contain the last period
+	std::string original_extension = input_file.substr(last_period); 
 
 	//our output file will be a file with the same name as the original, 
 	//but with the extension .WE_LOVE_CS_421
@@ -64,9 +69,10 @@ int main(int argc, char** argv) {
 
 
 	int	decompress_wc;
+	std::string decompress_of = "OUTPUT" + original_extension;
 
 	startTime = std::chrono::high_resolution_clock::now();
-	decompress_wc = LZW::decompress_to_string(ofname, "OUTPUT.TXT");
+	decompress_wc = LZW::decompress_to_string(ofname, decompress_of);
 	endTime = std::chrono::high_resolution_clock::now();
 
 	std::cout <<"decompressed to " << decompress_wc	<<" huge ass words" <<std::endl;

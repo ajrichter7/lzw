@@ -58,6 +58,7 @@ then we want to just encode the text using the values in the table and stop expa
 
 		std::unordered_map<std::string, uint16_t> table;
 
+		//Create a table of ASCII values as the beginning table for the dictionary LZW
 		for (int i = 0; i < 255; i++) {
 		  std::string x;
 		  char ass = (char)(i + 1);
@@ -69,19 +70,22 @@ then we want to just encode the text using the values in the table and stop expa
 
 		char cur_c;
 
+		// get the first character from the input file
 		input_file.get(cur_c);
 
 		char next_c;
 
+		// Declare a new string that is initialized to just the current character will append in loop
 		std::string cur_string;
 		cur_string += cur_c;
 		//std::cout <<"cur string is initially "  << cur_string <<"and cur_c is "<<cur_c <<std::endl;
 
 
-		//this should start with the second character
+		//Do this until we are at the end of the file. We want to compress the entire file
 		while (input_file.peek() != EOF )
 		{
 
+			// Get the next character and append it to the string, then we want to see if the new string in table
 			input_file.get(next_c);
 			std::string next_string = cur_string + next_c;
 			if (table.find(next_string) != table.cend()) // if the new string is in table
@@ -91,7 +95,7 @@ then we want to just encode the text using the values in the table and stop expa
 		//		std::cout <<"cur string is NOW "<<cur_string<<std::endl;
 			}
 
-			else
+			else // if the new string was not in the table and we can still create more substrings to add to the table, then add to table
 			{
 		//		std::cout <<"next string is "<<next_string<<" and next_code is " <<nextcode<<std::endl;
 				if (nextcode <= MAX_16_BIT_ENCODING)
@@ -109,17 +113,18 @@ then we want to just encode the text using the values in the table and stop expa
 				os<<table[cur_string]<<"\n";
 				num_bytes++;
 				//output_to_ostream(os, table[cur_string], innovation_c);
-				cur_string = next_c;
+				cur_string = next_c; // the current string becomes the next character
 
 			}
 		}
+		//Making sure to get the last bits
 		//std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl;
 		os<<table[cur_string];
 		num_bytes++;
 		//output_to_ostream(os, table[cur_string], 0);
 
 
-		input_file.close();
+		input_file.close(); // close the stream
 
 		return num_bytes;
 	}
@@ -136,18 +141,19 @@ then we want to just encode the text using the values in the table and stop expa
 	std::string decompress_to_string (std::string fn, std::string of_n)
 	{
 		/*
-Build the same dictionary and then we want to search through the dictionary to find the characters. This function will read in an encoded file and then we will write a decompressed version. 
+Build the same dictionary and then we want to search through the dictionary to find the characters. This function will read in an encoded file and then we will write a decompressed version.
 We read in the first value which is a number in ASCII so we look it up in the table we have created. Then we go and check if the next character can be read. If it is a value greater than the table size, then we are going
 to want to add the new value as an entry of the old code + new character.
 		*/
 		std::cout << "\n\n==DECOMPRESSION FILE==\nreading:"<<fn<<std::endl;
-		std::ofstream output_file(of_n);
+		std::ofstream output_file(of_n); // Writing to a file
 
 
-		std::ifstream input_file(fn);
+		std::ifstream input_file(fn); // Reading from a file
 
 		assert(input_file.is_open());
 
+		//Construct the table to same way as in compression
 		std::vector<std::string> table;
 		for (int i = 0; i < 255; i++) {
 			std::string x;
@@ -165,13 +171,14 @@ to want to add the new value as an entry of the old code + new character.
 		input_file.getline (getstringbuf, 255);
 		old_code = atoi(getstringbuf);
 		//std::cout << "get string buf is "<<getstringbuf<<std::endl;
-
+		// Search for the first character in the table and get the corresponding string to output
 		std::string cur_string = table[old_code];
 		output_file << cur_string ;
 
 		//std::cout<<"old code is "<<old_code<<" and cur string is " <<cur_string<<std::endl;
 		char cur_char = cur_string[0];
 
+		// Check to see if we have reached the end of the file
 		while (input_file.peek() != EOF) {
 		  uint16_t new_code;
 		  //input_file>>(new_code);
@@ -179,17 +186,20 @@ to want to add the new value as an entry of the old code + new character.
 		new_code = atoi(getstringbuf);
 
 		  std::string cur_string = "";
+			//If there is a new code but it is less than table size then we are going to want to add to table
 		  if (new_code >= table.size()) {
 		    cur_string = table[old_code];
 		    cur_string = cur_string + cur_char;
 		  } else {
 		    cur_string = table[new_code];
 		  }
+			//Output cur string which is the string from table
 		  output_file<<(cur_string);
 		  cur_char = cur_string[0];
-
+			// add to the table
 		  std::string thing_to_pushbacl = table[old_code] + cur_char;
 		  table.push_back(thing_to_pushbacl);
+			// Old code is now what new code used to be 
 		  old_code = new_code;
 		}
 

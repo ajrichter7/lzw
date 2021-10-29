@@ -35,6 +35,6 @@ The compression and decompression algorithms both successfully were used on DAVI
 | Book Title | Initial File Size (KB) | Final File Size (KB) | Compression Ratio (ie Compressed Size / Original Size) | Time to Compress (ms) | Time to Decompress (ms) | 
 | -----  | :----: |  :----:  |  :----:  |  :----: |  :----:  | 
 | David Copperfield  | 1986 |  769  |  38.7%  |  766 |  170  | 
-| David Copperfield  | 1986 |  769  |  38.7%  |  766 |  170  | 
-| David Copperfield  | 1986 |  769  |  38.7%  |  766 |  170  | 
+| Dracula | 861 | 349 |  40.5%  |  352 |  92  | 
+| Pride and Prejudice | 781 |  277  |  35.5%  | 297 |  75  | 
 

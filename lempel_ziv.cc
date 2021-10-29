@@ -3,29 +3,33 @@
 #include "constants.hh"
 
 
+uint16_t ReadU16(std::istream& file)
+{
+  uint16_t val;
+  uint8_t bytes[2];
 
-void output_to_ostream(std::ostream& os, uint16_t index, char inov_c) {
-	BitIO bitio(&os, nullptr);
-	//first we need to output index
-	for (int i = 0; i < 16; i++) {
-		bool bit = index & 1;
-		bitio.output_bit(bit);
-		index = index >> 1; //go to the next thing in index
-	}
+  file.read( (char*)bytes, 2 );  // read 2 bytes from the file
+  val = bytes[0] | (bytes[1] << 8);  // construct the 16-bit value from those bytes
 
-	//and now we have to output innovation_c
-	//8 bits for byte
-	int ass = (uint16_t) inov_c;
-	for (int i = 0; i < 16; i++) //please let me write my shitty loops
-	{
-		bool bit = ass & 1;
-		bitio.output_bit(bit);
-		ass = ass >> 1;
-	}
-
-	//OKAY WE DID IT
-
+  return val;
 }
+
+void WriteU16(std::ostream& file, uint16_t val)
+{
+  uint8_t bytes[2];
+
+  // extract the individual bytes from our value
+  bytes[0] = (val) & 0xFF;  // low byte
+  bytes[1] = (val >> 8) & 0xFF;  // high byte
+
+  // write those bytes to the file
+  file.write( (char*)bytes, 2 );
+}
+
+
+
+
+
 
 
 namespace LZW
@@ -108,10 +112,16 @@ then we want to just encode the text using the values in the table and stop expa
 
 				char innovation_c = next_c;
 
+				//get the number that we're gonna convert to ascii
+//				int number_to_be_converted_to_ascii = table[cur_string]; 
 
-		//		std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl;
-				os<<table[cur_string]<<"\n";
-				num_bytes++;
+//				std::string rando_ascii = convert_int_to_rando_ascii(number_to_be_converted_to_ascii);
+
+//				if(DEBUGLOGS)std::cout <<"rando ascii is "<<rando_ascii;
+
+//				os<<rando_ascii<<"\n";
+				WriteU16(os, table[cur_string]);
+				num_bytes+=2;
 				//output_to_ostream(os, table[cur_string], innovation_c);
 				cur_string = next_c; // the current string becomes the next character
 
@@ -119,9 +129,16 @@ then we want to just encode the text using the values in the table and stop expa
 		}
 		//Making sure to get the last bits
 		//std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl;
-		os<<table[cur_string];
+//		int number_to_be_converted_to_ascii = table[cur_string]; 
+
+//		std::string rando_ascii = convert_int_to_rando_ascii(number_to_be_converted_to_ascii);
+
+//		if(DEBUGLOGS)std::cout <<"rando ascii is "<<rando_ascii;
+
+//		os<<rando_ascii;
+		WriteU16(os, table[cur_string]);
+
 		num_bytes++;
-		//output_to_ostream(os, table[cur_string], 0);
 
 
 		input_file.close(); // close the stream
@@ -137,14 +154,24 @@ then we want to just encode the text using the values in the table and stop expa
 	}
 
 
+
+
+
+
+
 	//given a file name, this will get bits
-	std::string decompress_to_string (std::string fn, std::string of_n)
+	int decompress_to_string (std::string fn, std::string of_n)
 	{
+
 		/*
 Build the same dictionary and then we want to search through the dictionary to find the characters. This function will read in an encoded file and then we will write a decompressed version.
 We read in the first value which is a number in ASCII so we look it up in the table we have created. Then we go and check if the next character can be read. If it is a value greater than the table size, then we are going
 to want to add the new value as an entry of the old code + new character.
 		*/
+			
+		int wc = 0;
+
+
 		std::cout << "\n\n==DECOMPRESSION FILE==\nreading:"<<fn<<std::endl;
 		std::ofstream output_file(of_n); // Writing to a file
 
@@ -167,9 +194,14 @@ to want to add the new value as an entry of the old code + new character.
 		uint16_t old_code;
 		char getstringbuf[255];
 
-
+#if 0
 		input_file.getline (getstringbuf, 255);
-		old_code = atoi(getstringbuf);
+
+		if (DEBUGLOGS)	std::cout <<"getstringbuf is: [" <<getstringbuf <<"]"<<std::endl;
+		
+		old_code = convert_rando_ascii_to_index(getstringbuf);
+#endif
+		old_code = ReadU16(input_file);
 		//std::cout << "get string buf is "<<getstringbuf<<std::endl;
 		// Search for the first character in the table and get the corresponding string to output
 		std::string cur_string = table[old_code];
@@ -182,9 +214,14 @@ to want to add the new value as an entry of the old code + new character.
 		while (input_file.peek() != EOF) {
 		  uint16_t new_code;
 		  //input_file>>(new_code);
-		  input_file.getline (getstringbuf, 255);
-		new_code = atoi(getstringbuf);
+//		  input_file.getline (getstringbuf, 255);
+		  new_code=ReadU16(input_file);
+		  //new_code = convert_rando_ascii_to_index(getstringbuf);
+		  
+		  if (DEBUGLOGS) std::cout <<"newcode is "<<new_code<<std::endl;
 
+		  if (DEBUGLOGS)std::cout << "nold code is " <<old_code<<std::endl;
+		  
 		  std::string cur_string = "";
 			//If there is a new code but it is less than table size then we are going to want to add to table
 		  if (new_code >= table.size()) {
@@ -195,6 +232,7 @@ to want to add the new value as an entry of the old code + new character.
 		  }
 			//Output cur string which is the string from table
 		  output_file<<(cur_string);
+		  wc++;
 		  cur_char = cur_string[0];
 			// add to the table
 		  std::string thing_to_pushbacl = table[old_code] + cur_char;
@@ -202,111 +240,6 @@ to want to add the new value as an entry of the old code + new character.
 			// Old code is now what new code used to be 
 		  old_code = new_code;
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-
-
-
-
-		int nextcode = 256; //number of possible substrings
-
-		std::unordered_map<std::string, uint16_t> table;
-
-		for(int i = 1; i < 256; ++i)
-		{
-			std::string ass = "" + (char) i;
-			table[ass] = i-1;
-		}
-
-		char old_c;
-		char old_c_copy = old_c;
-
-
-		char new_c;
-
-		std::string prev_string = ""+ old_c;
-
-		auto byte;
-		std::ifstream input_file(fn);
-
-//
-		vector<std::string> table;
-		for (int i = 0; i < 255; i++) {
-		  string x = "" + (char)(i + 1);
-		  table.push_back(x);
-		}
-
-		vector<std::string> output;
-
-		uint16_t code;
-		input_file >> code;
-
-		cur_string = table[code];
-		output.push_back(cur_string);
-
-		while (! EOF) {
-		  input_file >> code;
-		  std::string next_string = table[code];
-		  std::string next_table_entry = cur_string + next_string[0];
-		  table.push_back(next_table_entry);
-		  output.push_back(next_string);
-
-		  cur_string = ??
-		}
-//
-		char first_c;
-		input_file.get(first_c);
-
-		std::string cur_string;
-
-		while( input_file.peek() != EOF )
-		{
-			input_file.get(next_c);
-
-
-			if (table.find(cur_string + next_c) != table.cend()) // if the new char is in the table
-			{
-
-				prev_string = next_string;
-
-			}
-
-
-
-
-
-
-
-
-
-		}
-
-
-
-		//use bitio to get things from a file name
-
-		//to get the next bit, use
-		bool next = next_bit.input_bit();
-		//it will return a bool
-#endif
-		std::string outputww;
-		return outputww;
+		return wc;
 	}
 }

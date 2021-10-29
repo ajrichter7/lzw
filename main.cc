@@ -54,32 +54,26 @@ int main(int argc, char** argv) {
 	auto endTime = std::chrono::high_resolution_clock::now();
 
 
-	std::cout <<"compressed to " <<compress_wc <<" words" <<std::endl;
+	std::cout <<"compressed to " <<compress_wc <<" BYTES" <<std::endl;
 
 
 	float milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>( endTime - startTime ).count();
-	std::cout <<"tiime to compress: " << milliseconds<<std::endl;
+	std::cout <<"tiime to compress: " << milliseconds << "ms"<<std::endl;
 
 	outputfile.close();
 
 
+	int	decompress_wc;
 
 	startTime = std::chrono::high_resolution_clock::now();
-	LZW::decompress_to_string(ofname, "OUTPUT.TXT");
+	decompress_wc = LZW::decompress_to_string(ofname, "OUTPUT.TXT");
 	endTime = std::chrono::high_resolution_clock::now();
 
+	std::cout <<"decompressed to " << decompress_wc	<<" huge ass words" <<std::endl;
 	milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>( endTime - startTime ).count();
-	std::cout <<"time to decompress: " << milliseconds<<std::endl;
+	std::cout <<"time to decompress: " << milliseconds << "ms"<<std::endl;
 
 
 	outputfile.close();
-
-	//ok now it's time to call a lempel ziv
-	//compress (input_file, &outputfile);
-
-
-
-
-
 
 }

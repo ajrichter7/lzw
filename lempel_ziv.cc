@@ -2,6 +2,10 @@
 #include "constants.hh"
 
 
+
+//helper functions for writing and reading bits from a file without using getline
+//getline will break if it reads 00000000, so we have to do this instead
+
 uint16_t ReadU16(std::istream& file)
 {
   uint16_t val;
@@ -13,6 +17,7 @@ uint16_t ReadU16(std::istream& file)
   return val;
 }
 
+//this writes bits to a file
 void WriteU16(std::ostream& file, uint16_t val)
 {
   uint8_t bytes[2];
@@ -33,11 +38,6 @@ void WriteU16(std::ostream& file, uint16_t val)
 
 namespace LZW
 {
-	bit_stream_t compress(std::vector<bool> input) {
-
-		bit_stream_t output;
-		return output;
-	}
 
 
 	//this will take the name of a file and then read from it
@@ -48,6 +48,7 @@ Start by constructing the table  with the ASCII characters in the first 256 entr
 table which it is not, so then we are going to add that to the new table and increment the size of the table. Note that newcode is a counter to make sure that we don’t go past the number of possible substrings. If we reach that condition,
 then we want to just encode the text using the values in the table and stop expanding the table.
  */
+		//keeping track of how many BYTES we've encoded
 		int num_bytes = 0;
 
 		//opening file from name
@@ -111,45 +112,23 @@ then we want to just encode the text using the values in the table and stop expa
 
 				char innovation_c = next_c;
 
-				//get the number that we're gonna convert to ascii
-//				int number_to_be_converted_to_ascii = table[cur_string]; 
-
-//				std::string rando_ascii = convert_int_to_rando_ascii(number_to_be_converted_to_ascii);
-
-//				if(DEBUGLOGS)std::cout <<"rando ascii is "<<rando_ascii;
-
-//				os<<rando_ascii<<"\n";
+				//write file to the os, 16 bits at a time
 				WriteU16(os, table[cur_string]);
 				num_bytes+=2;
-				//output_to_ostream(os, table[cur_string], innovation_c);
 				cur_string = next_c; // the current string becomes the next character
 
 			}
 		}
 		//Making sure to get the last bits
-		//std::cout <<"code that you're outputting "<<cur_string <<"and the value si " << table[cur_string]<<std::endl;
-//		int number_to_be_converted_to_ascii = table[cur_string]; 
-
-//		std::string rando_ascii = convert_int_to_rando_ascii(number_to_be_converted_to_ascii);
-
-//		if(DEBUGLOGS)std::cout <<"rando ascii is "<<rando_ascii;
-
-//		os<<rando_ascii;
+		//writing the last bits
 		WriteU16(os, table[cur_string]);
 
-		num_bytes++;
+		num_bytes+=2;
 
 
 		input_file.close(); // close the stream
 
 		return num_bytes;
-	}
-
-
-	std::vector<bool> decompress_to_bools (bit_stream_t input)
-	{
-		std::vector<bool> output;
-		return output;
 	}
 
 
@@ -193,15 +172,9 @@ to want to add the new value as an entry of the old code + new character.
 		uint16_t old_code;
 		char getstringbuf[255];
 
-#if 0
-		input_file.getline (getstringbuf, 255);
-
-		if (DEBUGLOGS)	std::cout <<"getstringbuf is: [" <<getstringbuf <<"]"<<std::endl;
-		
-		old_code = convert_rando_ascii_to_index(getstringbuf);
-#endif
+		//reading 16 bits from the encoded file
 		old_code = ReadU16(input_file);
-		//std::cout << "get string buf is "<<getstringbuf<<std::endl;
+
 		// Search for the first character in the table and get the corresponding string to output
 		std::string cur_string = table[old_code];
 		output_file << cur_string ;
@@ -212,10 +185,9 @@ to want to add the new value as an entry of the old code + new character.
 		// Check to see if we have reached the end of the file
 		while (input_file.peek() != EOF) {
 		  uint16_t new_code;
-		  //input_file>>(new_code);
-//		  input_file.getline (getstringbuf, 255);
+
+		  //reading 16 bits from the input file
 		  new_code=ReadU16(input_file);
-		  //new_code = convert_rando_ascii_to_index(getstringbuf);
 		  
 		  if (DEBUGLOGS) std::cout <<"newcode is "<<new_code<<std::endl;
 

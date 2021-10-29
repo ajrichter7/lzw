@@ -25,14 +25,10 @@ using map_t = std::map<const std::vector<bool>, bool, alwaysbigger>;
 
 namespace LZW
 {
-	//this will compress a string of bools 
-	bit_stream_t compress (std::vector<bool>);
 
 	int compress (std::string, std::ostream&);
 
 
-	//we need decompress for bool vectors, strings, and ints
-	std::vector<bool> decompress_to_bools (bit_stream_t);
 	// takes an input file and an  output file, returns an int with # characters in it
 	int decompress_to_string (std::string,std::string);
 }

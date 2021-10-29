@@ -40,4 +40,13 @@ The compression and decompression algorithms both successfully were used on DAVI
 | David Copperfield  | 1986 |  769  |  38.7%  |  766 |  170  | 
 | Dracula | 861 | 349 |  40.5%  |  352 |  92  | 
 | Pride and Prejudice | 781 |  277  |  35.5%  | 297 |  75  | 
+| Ariel's HUM110 final | 6 |  5  |  83.3%  | 3 |  12  | 
+| Ariel's Lit 472 final | 22 |  14  |  63.6%  | 11 |  17  |
+| Ariel's Thesis (as of 10/29/21) | 26 |  17  |  65.4%  | 13 |  14  |
+| lempel_ziv.cc | 8 |  6  |  75%  | 4 |  11  |
+
+
+
+### Ariel's Papers
+I was curious to see how redundant papers I've written before are. My HUM final was really unique, but I'm glad the crowning achievement of my time at Washington University in St Louis was less redundant than David Copperfield (which I had to read for that 400 level class).  I kinda went crazy with it, but it was cool to compress random stuff, including the code for this project.
 

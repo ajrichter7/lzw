@@ -48,5 +48,5 @@ The compression and decompression algorithms both successfully were used on DAVI
 
 
 ### Ariel's Papers
-I was curious to see how redundant papers I've written before are. My HUM final was really unique, but I'm glad the crowning achievement of my time at Washington University in St Louis was less redundant than David Copperfield (which I had to read for that 400 level class).  I kinda went crazy with it, but it was cool to compress random stuff, including the code for this project.
+Ariel: I was curious to see how redundant papers I've written before are. My HUM final was really unique, but I'm glad the crowning achievement of my time at Washington University in St Louis was less redundant than David Copperfield (which I had to read for that 400 level class).  I kinda went crazy with it, but it was cool to compress random stuff, including the code for this project.
 
